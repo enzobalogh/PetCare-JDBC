@@ -1,6 +1,7 @@
 package br.com.petcare.dao;
 
 import br.com.petcare.database.ConnectionFactory;
+import br.com.petcare.model.Proprietario;
 import br.com.petcare.model.Veterinario;
 import java.sql.*;
 import java.util.ArrayList;
@@ -46,4 +47,42 @@ public class VeterinarioDAO {
         }
         return lista;
     }
+
+    public void atualizar(Veterinario v){
+        String sql = "UPDATE Veterinario SET nome_veterinario = ?, crmv = ?, especialidade = ?, telefone = ? WHERE id_veterinario = ?";
+
+        try(Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, v.getNome());
+            stmt.setString(2, v.getCrmv());
+            stmt.setString(3, v.getEspecialidade());
+            stmt.setString(4, v.getTelefone());
+            stmt.setInt(5, v.getId());
+
+            stmt.executeUpdate();
+        } catch (Exception e){
+            e.printStackTrace();
+            e.getMessage();
+        }
+    }
+
+    public void deletar(int id){
+        String sql = "DELETE FROM Veterinario WHERE id_veterinario = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setInt(1,id);
+            stmt.executeUpdate();
+
+        } catch (Exception e){
+            e.printStackTrace();
+            e.getMessage();
+        }
+
+
+
+    }
+
 }

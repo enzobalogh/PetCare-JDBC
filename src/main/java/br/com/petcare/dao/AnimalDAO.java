@@ -74,6 +74,7 @@ public class AnimalDAO {
             stmt.setDate(4, java.sql.Date.valueOf(a.getData_de_nascimento()));
             stmt.setDouble(5, a.getPeso());
             stmt.setInt(6, a.getId_proprietario());
+            stmt.setInt(7, a.getId());
 
             stmt.executeUpdate();
             System.out.println("Animal "+a.getNome()+" inserido com sucesso");
@@ -83,13 +84,13 @@ public class AnimalDAO {
         }
     }
 
-    public void deletar(String id){
+    public void deletar(int id){
         String sql = "DELETE FROM Animais WHERE id_animal = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)){
 
-            stmt.setString(1,id);
+            stmt.setInt(1,id);
             stmt.executeUpdate();
 
         } catch (Exception e){
@@ -100,4 +101,36 @@ public class AnimalDAO {
 
 
     }
+
+    public static Animal buscarPorId(int id) {
+        String sql = "SELECT * FROM Animais WHERE id_animal = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Animal a = new Animal();
+                a.setId(rs.getInt("id_animal"));
+                a.setNome(rs.getString("nome_animal"));
+                a.setEspecie(rs.getString("especie"));
+                a.setRaca(rs.getString("raca"));
+                a.setData_de_nascimento(rs.getDate("data_nascimento").toLocalDate());
+                a.setPeso(rs.getDouble("peso"));
+                a.setId_proprietario(rs.getInt("id_proprietario"));
+                return a;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+
 }

@@ -1,6 +1,7 @@
 package br.com.petcare.dao;
 
 import br.com.petcare.database.ConnectionFactory;
+import br.com.petcare.model.Animal;
 import br.com.petcare.model.Proprietario;
 
 import javax.xml.transform.Result;
@@ -94,4 +95,33 @@ public class ProprietarioDAO {
 
 
     }
+
+    public static Proprietario buscarPorCPF(String cpf) {
+        String sql = "SELECT * FROM Proprietario WHERE cpf = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, cpf);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Proprietario p = new Proprietario();
+                p.setId(rs.getInt("id_proprietario"));
+                p.setNome(rs.getString("nome_proprietarios"));
+                p.setCpf(rs.getString("cpf"));
+                p.setTelefone(rs.getString("telefone"));
+                p.setEndereco(rs.getString("endereco"));
+                p.setEmail(rs.getString("email"));
+                return p;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null; // Se não achou
+    }
+
 }
