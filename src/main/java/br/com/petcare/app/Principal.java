@@ -18,11 +18,12 @@ public class Principal extends Menu {
 
         AnimalDAO animalDAO = new AnimalDAO();
         ProprietarioDAO proprietarioDAO = new ProprietarioDAO();
-        VeterinarioDAO vetDAO = new VeterinarioDAO();
-        ConsultaDAO consDAO = new ConsultaDAO();
+        VeterinarioDAO veterinarioDAO = new VeterinarioDAO();
+        ConsultaDAO consultaDAO = new ConsultaDAO();
 
         Scanner sc = new Scanner(System.in);
         int opcao;
+        int opcao2;
 
         do {
             System.out.println("===== PETCARE =====");
@@ -35,100 +36,279 @@ public class Principal extends Menu {
             opcao = sc.nextInt();
             sc.nextLine();
 
-            switch(opcao) {
-
+            switch (opcao) {
                 case 1:
-                    Proprietario p = lerDadosProprietario();
-                    proprietarioDAO.inserir(p);
-                    System.out.println("\n== LISTA DE PROPRIETÁRIOS ==");
-                    List<Proprietario> proprietarios = proprietarioDAO.listarTodos();
-                    for(Proprietario dono : proprietarios){
-                        System.out.println("ID: "+dono.getId() + " | Nome: "+dono.getNome() + " | CPF: "+dono.getCpf());
+                    System.out.println("== GERENCIAR PROPRIETÁRIO ==");
+                    System.out.println("O que deseja fazer:");
+                    System.out.println("1 - Inserir proprietário");
+                    System.out.println("2 - Excluir proprietário");
+                    System.out.println("3 - Atualizar proprietário");
+                    System.out.println("4 - Voltar");
+                    opcao2 = sc.nextInt();
+                    switch (opcao2) {
+                        case 1:
+                            Proprietario p = lerDadosProprietario();
+                            proprietarioDAO.inserir(p);
+                            System.out.println("\n== LISTA DE PROPRIETÁRIOS ==");
+                            List<Proprietario> proprietarios = proprietarioDAO.listarTodos();
+                            for (Proprietario dono : proprietarios) {
+                                System.out.println(
+                                        "ID: " + dono.getId() +
+                                                ", Nome: " + dono.getNome() +
+                                                ", CPF: " + dono.getCpf() +
+                                                ", Telefone: " + dono.getTelefone() +
+                                                ", Endereço: " + dono.getEndereco() +
+                                                ", Email: " + dono.getEmail()
+                                );
+                            }
+                            break;
+                        case 2:
+                            //EXCLUIR PROPRIETARIO
+                            System.out.println("Digite o CPF do proprietário:");
+                            String cpf = sc.nextLine();
+                            excluirProprietario(cpf);
+                            proprietarios = proprietarioDAO.listarTodos();
+                            for (Proprietario dono : proprietarios) {
+                                System.out.println(
+                                        "ID: " + dono.getId() +
+                                                ", Nome: " + dono.getNome() +
+                                                ", CPF: " + dono.getCpf() +
+                                                ", Telefone: " + dono.getTelefone() +
+                                                ", Endereço: " + dono.getEndereco() +
+                                                ", Email: " + dono.getEmail()
+                                );
+                            }
+                            break;
+
+                        case 3:
+                            //ATUALIZAR PROPRIETÁRIO
+                            cpf = sc.nextLine();
+                            atualizarProprietario(cpf);
+                            proprietarios = proprietarioDAO.listarTodos();
+                            for (Proprietario dono : proprietarios) {
+                                System.out.println(
+                                        "ID: " + dono.getId() +
+                                                ", Nome: " + dono.getNome() +
+                                                ", CPF: " + dono.getCpf() +
+                                                ", Telefone: " + dono.getTelefone() +
+                                                ", Endereço: " + dono.getEndereco() +
+                                                ", Email: " + dono.getEmail()
+                                );
+                            }
+
                     }
                     break;
 
                 case 2:
-                    Animal a = lerDadosAnimal();
-                    animalDAO.inserir(a);
-                    System.out.println("\n== LISTA DE ANIMAIS ==");
-                    List<Animal> animais = animalDAO.listarTodos();
-                    for(Animal bicho : animais){
-                        System.out.println("ID: " + bicho.getId() + " | Nome: " + bicho.getNome() + " | Dono ID: " + bicho.getId_proprietario());
+                    System.out.println("== GERENCIAR ANIMAL ==");
+                    System.out.println("O que deseja fazer:");
+                    System.out.println("1 - Inserir animal");
+                    System.out.println("2 - Excluir animal");
+                    System.out.println("3 - Atualizar animal");
+                    System.out.println("4 - Voltar");
+                    opcao2 = sc.nextInt();
+                    switch (opcao2) {
+                        case 1:
+                            Animal a = lerDadosAnimal();
+                            animalDAO.inserir(a);
+                            System.out.println("\n== LISTA DE ANIMAIS ==");
+                            List<Animal> animais = animalDAO.listarTodos();
+                            for (Animal bicho : animais) {
+                                System.out.println(
+                                        "ID: " + bicho.getId() +
+                                                ", Nome: " + bicho.getNome() +
+                                                ", Espécie: " + bicho.getEspecie() +
+                                                ", Raça: " + bicho.getRaca() +
+                                                ", Nascimento: " + bicho.getData_de_nascimento() +
+                                                ", Peso: " + bicho.getPeso() +
+                                                ", Proprietário ID: " + bicho.getId_proprietario()
+                                );
+                            }
+                            break;
+
+                        case 2:
+                            //EXCLUIR ANIMAL
+                            System.out.println("Digite o ID do Animal:");
+                            int id = sc.nextInt();
+                            excluirAnimal(id);
+                            System.out.println("\n== LISTA DE ANIMAIS ==");
+                            animais = animalDAO.listarTodos();
+                            for (Animal bicho : animais) {
+                                System.out.println(
+                                        "ID: " + bicho.getId() +
+                                                ", Nome: " + bicho.getNome() +
+                                                ", Espécie: " + bicho.getEspecie() +
+                                                ", Raça: " + bicho.getRaca() +
+                                                ", Nascimento: " + bicho.getData_de_nascimento() +
+                                                ", Peso: " + bicho.getPeso() +
+                                                ", Proprietário ID: " + bicho.getId_proprietario()
+                                );
+                            }
+                            break;
+                        case 3:
+                            //ATUALIZAR ANIMAL
+                            System.out.println("Digite o ID do Animal:");
+                             id = sc.nextInt();
+                             atualizarAnimal(id);
+                            System.out.println("\n== LISTA DE ANIMAIS ==");
+                            animais = animalDAO.listarTodos();
+                            for (Animal bicho : animais) {
+                                System.out.println(
+                                        "ID: " + bicho.getId() +
+                                                ", Nome: " + bicho.getNome() +
+                                                ", Espécie: " + bicho.getEspecie() +
+                                                ", Raça: " + bicho.getRaca() +
+                                                ", Nascimento: " + bicho.getData_de_nascimento() +
+                                                ", Peso: " + bicho.getPeso() +
+                                                ", Proprietário ID: " + bicho.getId_proprietario()
+                                );
+                            }
+                            break;
                     }
                     break;
-
                 case 3:
-                    System.out.println("--- VETERINÁRIOS ---");
-                    System.out.println("1-Cadastrar | 2-Listar | 3-Atualizar | 4-Deletar");
-                    int opVet = sc.nextInt();
-                    sc.nextLine();
-
-                    switch(opVet) {
-                        case 1:
-                            vetDAO.inserir(lerDadosVeterinario());
+                    System.out.println("== GERENCIAR VETERINÁRIO ==");
+                    System.out.println("O que deseja fazer:");
+                    System.out.println("1 - Inserir Veterinário");
+                    System.out.println("2 - Excluir Veterinário");
+                    System.out.println("3 - Atualizar Veterinário");
+                    System.out.println("4 - Voltar");
+                    opcao2 = sc.nextInt();
+                    switch (opcao2) {
+                        case 1 :
+                            //INSERIR VETERINARIO
+                            Veterinario v = lerDadosVeterinario();
+                            veterinarioDAO.inserir(v);
+                            System.out.println("\n== LISTA DE VETERINÁRIOS ==");
+                            List<Veterinario> veterinarios = veterinarioDAO.listarTodos();
+                            for (Veterinario vet : veterinarios) {
+                                System.out.println(
+                                        "ID: " + vet.getId() +
+                                                ", Nome: " + vet.getNome() +
+                                                ", CRMV: " + vet.getCrmv() +
+                                                ", Especialidade: " + vet.getEspecialidade() +
+                                                ", Telefone: " + vet.getTelefone()
+                                );
+                            }
                             break;
+
                         case 2:
-                            for(Veterinario v : vetDAO.listarTodos()) {
-                                System.out.println("ID: " + v.getId() + " | Nome: " + v.getNome() + " | CRMV: " + v.getCrmv());
+                            //EXCLUIR VETERINARIO
+                            System.out.println("Digite o ID do Veterinário:");
+                            int id = sc.nextInt();
+                            excluirVeterinario(id);
+
+                            System.out.println("\n== LISTA DE VETERINÁRIOS ==");
+                            veterinarios = veterinarioDAO.listarTodos();
+                            for (Veterinario vet : veterinarios) {
+                                System.out.println(
+                                        "ID: " + vet.getId() +
+                                                ", Nome: " + vet.getNome() +
+                                                ", CRMV: " + vet.getCrmv() +
+                                                ", Especialidade: " + vet.getEspecialidade() +
+                                                ", Telefone: " + vet.getTelefone()
+
+                                );
                             }
                             break;
                         case 3:
-                            System.out.print("ID para atualizar: ");
-                            int idV = sc.nextInt();
-                            sc.nextLine();
-                            Veterinario vUp = lerDadosVeterinario();
-                            vUp.setId(idV);
-                            vetDAO.atualizar(vUp);
-                            break;
-                        case 4:
-                            System.out.print("ID para deletar: ");
-                            int idDelV = sc.nextInt();
-                            sc.nextLine();
-                            vetDAO.deletar(idDelV);
-                            break;
-                    }
-                    break;
+                            //ATUALIZAR VETERINARIO
+                            System.out.println("Digite o ID do Veterinário:");
+                            id = sc.nextInt();
+                            atualizarVeterinario(id);
+                            System.out.println("\n== LISTA DE VETERINÁRIOS ==");
+                            veterinarios = veterinarioDAO.listarTodos();
+                            for (Veterinario vet : veterinarios) {
+                                System.out.println(
+                                        "ID: " + vet.getId() +
+                                                ", Nome: " + vet.getNome() +
+                                                ", CRMV: " + vet.getCrmv() +
+                                                ", Especialidade: " + vet.getEspecialidade() +
+                                                ", Telefone: " + vet.getTelefone()
 
+                                );
+                            }
+                            break;
+
+                            }
+                            break;
                 case 4:
-                    System.out.println("--- CONSULTAS ---");
-                    System.out.println("1-Agendar | 2-Listar | 3-Atualizar | 4-Deletar");
-                    int opCon = sc.nextInt();
-                    sc.nextLine();
+                    System.out.println("== GERENCIAR CONSULTAS ==");
+                    System.out.println("O que deseja fazer:");
+                    System.out.println("1 - Agendar Consulta");
+                    System.out.println("2 - Desmarcar Consulta");
+                    System.out.println("3 - Atualizar Consulta");
+                    System.out.println("4 - Voltar");
+                    opcao2 = sc.nextInt();
 
-                    switch(opCon) {
-                        case 1:
-                            consDAO.inserir(lerDadosConsulta());
+                    switch (opcao2){
+                        case 1 :
+                            //INSERIR Consulta
+                            Consulta c = lerDadosConsulta();
+                            consultaDAO.inserir(c);
+                            System.out.println("\n== LISTA DE CONSULTAS ==");
+                            List<Consulta> consultas = consultaDAO.listarTodas();
+                            for (Consulta cons : consultas) {
+                                System.out.println(
+                                        "ID: " + cons.getId() +
+                                                ", Data e Hora: " + cons.getData_hora() +
+                                                ", Diagnóstico: " + cons.getDiagnostico() +
+
+                                                ", ID do Animal: " + cons.getId_Animal()+
+                                                ", ID do Veterinario: "+cons.getId_Veterinario()+
+                                                //Valor vai ser simulado pelo usuário
+                                                ", Valor: "+"R$" + cons.getValor()
+                                );
+                            }
                             break;
-                        case 2:
-                            for(Consulta c : consDAO.listarTodas()) {
-                                System.out.println("ID: " + c.getId() + " | Data: " + c.getData_hora() + " | Diag: " + c.getDiagnostico());
+                        case 2 :
+                            // DESMARCAR CONSULTA
+                            System.out.println("Digite o ID da Consulta:");
+                            int id = sc.nextInt();
+                            excluirConsulta(id);
+                            System.out.println("\n== LISTA DE CONSULTAS ==");
+                            consultas = consultaDAO.listarTodas();
+                            for (Consulta cons : consultas) {
+                                System.out.println(
+                                        "ID: " + cons.getId() +
+                                                ", Data e Hora: " + cons.getData_hora() +
+                                                ", Diagnóstico: " + cons.getDiagnostico() +
+
+                                                ", ID do Animal: " + cons.getId_Animal()+
+                                                ", ID do Veterinario: "+cons.getId_Veterinario()+
+                                                //Valor vai ser simulado pelo usuário
+                                                ", Valor: "+"R$" + cons.getValor()
+                                );
                             }
                             break;
                         case 3:
-                            System.out.print("ID para atualizar: ");
-                            int idC = sc.nextInt();
-                            sc.nextLine();
-                            Consulta cUp = lerDadosConsulta();
-                            cUp.setId(idC);
-                            consDAO.atualizar(cUp);
+                            //Atualizar consultas
+                            System.out.println("Digite o ID da Consulta:");
+                            id = sc.nextInt();
+                            atualizarConsulta(id);
+                            System.out.println("\n== LISTA DE CONSULTAS ==");
+                            consultas = consultaDAO.listarTodas();
+                            for (Consulta cons : consultas) {
+                                System.out.println(
+                                        "ID: " + cons.getId() +
+                                                ", Data e Hora: " + cons.getData_hora() +
+                                                ", Diagnóstico: " + cons.getDiagnostico() +
+
+                                                ", ID do Animal: " + cons.getId_Animal()+
+                                                ", ID do Veterinario: "+cons.getId_Veterinario()+
+                                                //Valor vai ser simulado pelo usuário
+                                                ", Valor: "+"R$" + cons.getValor()
+                                );
+                            }
                             break;
-                        case 4:
-                            System.out.print("ID para deletar: ");
-                            int idDelC = sc.nextInt();
-                            sc.nextLine();
-                            consDAO.deletar(idDelC);
-                            break;
+
+
                     }
-                    break;
-
-                case 0:
-                    System.out.println("Encerrando...");
-                    break;
-
-                default:
-                    System.out.println("Opção inválida.");
-            }
+                    }
 
         } while (opcao != 0);
+
+        System.out.println("Encerrando...");
     }
 }
+
