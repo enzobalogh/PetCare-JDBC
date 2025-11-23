@@ -10,6 +10,8 @@ import br.com.petcare.model.Proprietario;
 import br.com.petcare.model.Veterinario;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
@@ -43,24 +45,14 @@ public class Menu {
         animal.setNome(nome);
         animal.setEspecie(especie);
         animal.setRaca(raca);
-        try {
-            animal.setData_de_nascimento(LocalDate.parse(data));
-        } catch (DateTimeParseException e) {
-            System.out.println("Data inválida! Inserindo data atual por padrão.");
-            animal.setData_de_nascimento(LocalDate.now());
-        }
+        animal.setData_de_nascimento(LocalDate.parse(data));
         animal.setPeso(peso);
         animal.setId_proprietario(idProprietario);
 
         return animal;
     }
-
     public static Animal excluirAnimal(int id){
         System.out.println("== EXCLUIR ANIMAL ==");
-        System.out.println("Digite o id do animal que deseja excluir:");
-        id = sc.nextInt();
-        sc.nextLine();
-
         AnimalDAO animaldao = new AnimalDAO();
         Animal a = animaldao.buscarPorId(id);
 
@@ -79,12 +71,130 @@ public class Menu {
         }
         System.out.println("Exclusão cancelada.");
         return null;
+
+    }
+
+    public static Proprietario excluirProprietario(String cpf){
+        System.out.println("== EXCLUIR PROPRIETÁRIO ==");
+        ProprietarioDAO proprietarioDAO = new ProprietarioDAO();
+
+        Proprietario p = proprietarioDAO.buscarPorCPF(cpf);
+
+        if(p == null){
+            System.out.println("Proprietário não encontrado!");
+            return null;
+        }
+
+        System.out.println("Confirmar exclusão de "+p.getNome()+"? (s/n)");
+        System.out.println("Excluindo um proprietário, excluirá também todos os animais que pertecem a ele no banco.");
+        System.out.println("Deseja continuar? (s/n)");
+        String resp = sc.nextLine();
+
+        if (resp.equalsIgnoreCase("s")){
+            proprietarioDAO.deletar(cpf);
+            System.out.println("Proprietário de id "+p.getId()+" foi excluído com sucesso!");
+            return p;
+        }
+        System.out.println("Exclusão cancelada.");
+        return null;
+
+    }
+
+
+    public static Proprietario lerDadosProprietario() {
+        System.out.println("=== Cadastro de Prorietário ===");
+
+        System.out.print("Nome do Proprietário: ");
+        String nome = sc.nextLine();
+
+        System.out.print("CPF: ");
+        String cpf = sc.nextLine();
+
+        System.out.print("Telefone: ");
+        String telefone = sc.nextLine();
+
+        System.out.print("Endereço");
+        String endereco = sc.nextLine();
+
+        System.out.print("Email: ");
+        String email = sc.nextLine();
+
+        Proprietario proprietario = new Proprietario();
+        proprietario.setNome(nome);
+        proprietario.setCpf(cpf);
+        proprietario.setTelefone(telefone);
+        proprietario.setEndereco(endereco);
+        proprietario.setEmail(email);
+
+        return proprietario;
+    }
+
+    public static Proprietario atualizarProprietario(String cpf){
+        System.out.println("== ATUALIZAÇÃO DE PROPRIETÁRIO ==");
+
+        ProprietarioDAO proprietarioDAO = new ProprietarioDAO();
+
+         Proprietario p = proprietarioDAO.buscarPorCPF(cpf);
+
+         if(p == null){
+             System.out.println("Proprietário não encontrado");
+             return null;
+         }
+
+        System.out.println("\nProprietário encontrado:");
+        System.out.println("ID: "+p.getId());
+        System.out.println("Nome: "+p.getNome());
+        System.out.println("CPF: "+p.getCpf());
+        System.out.println("Telefone: "+p.getTelefone());
+        System.out.println("Endereço: "+p.getEndereco());
+        System.out.println("Email: "+p.getEmail());
+
+        System.out.println("\nDeseja atualizar os dados? (s/n)");
+        String resp = sc.nextLine();
+
+        if(!resp.equalsIgnoreCase("s")){
+            System.out.println("Atualização cancelada");
+        }
+
+        System.out.println("Novo nome (ou ENTER para manter "+p.getNome()+")");
+        String novoNome = sc.nextLine();
+        if(!novoNome.isEmpty()){
+            p.setNome(novoNome);
+        }
+
+        System.out.println("Novo telefone (ou ENTER para manter "+p.getTelefone());
+        String novoTelefone = sc.nextLine();
+        if(!novoTelefone.isEmpty()){
+            p.setTelefone(novoTelefone);
+        }
+
+        System.out.println("Novo endereço (ou ENTER para manter "+p.getEndereco()+")");
+        String novoEndereco = sc.nextLine();
+        if(!novoEndereco.isEmpty()){
+            p.setEndereco(novoEndereco);
+        }
+
+        System.out.println("Novo email (ou ENTER para manter "+p.getEmail()+")");
+        String novoEmail = sc.nextLine();
+        if(!novoEmail.isEmpty()){
+            p.setEmail(novoEmail);
+        }
+
+        proprietarioDAO.atualizar(p);
+
+        System.out.println("Proprietário atualizado com sucesso!");
+        return p;
+
+
+
+
     }
 
     public static Animal atualizarAnimal(int id){
         System.out.println("== ATUALIZAÇÃO DE ANIMAL ==");
 
         AnimalDAO animalDAO = new AnimalDAO();
+
         Animal a = animalDAO.buscarPorId(id);
 
         if(a == null){
@@ -106,7 +216,6 @@ public class Menu {
 
         if(!resp.equalsIgnoreCase("s")){
             System.out.println("Atualização cancelada");
-            return null;
         }
 
         System.out.println("Novo nome (ou ENTER para manter "+a.getNome()+")");
@@ -135,134 +244,28 @@ public class Menu {
                 LocalDate novaData = LocalDate.parse(dataDigitada);
                 a.setData_de_nascimento(novaData);
             } catch (Exception e) {
-                System.out.println("Data inválida! Mantendo a anterior.");
+                System.out.println("Data inválida! Use o formato yyyy-MM-dd");
             }
         }
 
         System.out.println("Novo peso (ou digite 0 para manter "+a.getPeso()+")");
         double novoPeso = sc.nextDouble();
-        if(novoPeso != 0){
+        if(!(novoPeso == 0)){
             a.setPeso(novoPeso);
         }
 
         System.out.println("Novo ID do proprietário (ou digite 0 para manter "+a.getId_proprietario()+")");
         int novoId_Prop = sc.nextInt();
-        sc.nextLine();
-        if(novoId_Prop != 0){
+        if(!(novoId_Prop == 0)){
             a.setId_proprietario(novoId_Prop);
         }
 
+
+
         animalDAO.atualizar(a);
+
         System.out.println("Animal atualizado com sucesso!");
         return a;
-    }
-
-    public static Proprietario lerDadosProprietario() {
-        System.out.println("=== Cadastro de Proprietário ===");
-
-        System.out.print("Nome do Proprietário: ");
-        String nome = sc.nextLine();
-
-        System.out.print("CPF: ");
-        String cpf = sc.nextLine();
-
-        System.out.print("Telefone: ");
-        String telefone = sc.nextLine();
-
-        System.out.print("Endereço: ");
-        String endereco = sc.nextLine();
-
-        System.out.print("Email: ");
-        String email = sc.nextLine();
-
-        Proprietario proprietario = new Proprietario();
-        proprietario.setNome(nome);
-        proprietario.setCpf(cpf);
-        proprietario.setTelefone(telefone);
-        proprietario.setEndereco(endereco);
-        proprietario.setEmail(email);
-
-        return proprietario;
-    }
-
-    public static Proprietario excluirProprietario(String cpf){
-        System.out.println("== EXCLUIR PROPRIETÁRIO ==");
-        ProprietarioDAO proprietarioDAO = new ProprietarioDAO();
-
-        Proprietario p = proprietarioDAO.buscarPorCPF(cpf);
-
-        if(p == null){
-            System.out.println("Proprietário não encontrado!");
-            return null;
-        }
-
-        System.out.println("Confirmar exclusão de "+p.getNome()+"? (s/n)");
-        System.out.println("ATENÇÃO: Excluindo um proprietário, excluirá também todos os animais dele.");
-        String resp = sc.nextLine();
-
-        if (resp.equalsIgnoreCase("s")){
-            proprietarioDAO.deletar(cpf);
-            System.out.println("Proprietário de ID "+p.getId()+" excluído com sucesso!");
-            return p;
-        }
-        System.out.println("Exclusão cancelada.");
-        return null;
-    }
-
-    public static Proprietario atualizarProprietario(String cpf){
-        System.out.println("== ATUALIZAÇÃO DE PROPRIETÁRIO ==");
-
-        ProprietarioDAO proprietarioDAO = new ProprietarioDAO();
-        Proprietario p = proprietarioDAO.buscarPorCPF(cpf);
-
-        if(p == null){
-            System.out.println("Proprietário não encontrado");
-            return null;
-        }
-
-        System.out.println("\nProprietário encontrado:");
-        System.out.println("ID: "+p.getId());
-        System.out.println("Nome: "+p.getNome());
-        System.out.println("CPF: "+p.getCpf());
-        System.out.println("Telefone: "+p.getTelefone());
-        System.out.println("Endereço: "+p.getEndereco());
-        System.out.println("Email: "+p.getEmail());
-
-        System.out.println("\nDeseja atualizar os dados? (s/n)");
-        String resp = sc.nextLine();
-
-        if(!resp.equalsIgnoreCase("s")){
-            System.out.println("Atualização cancelada");
-            return null;
-        }
-
-        System.out.println("Novo nome (ou ENTER para manter "+p.getNome()+")");
-        String novoNome = sc.nextLine();
-        if(!novoNome.isEmpty()){
-            p.setNome(novoNome);
-        }
-
-        System.out.println("Novo telefone (ou ENTER para manter "+p.getTelefone()+")");
-        String novoTelefone = sc.nextLine();
-        if(!novoTelefone.isEmpty()){
-            p.setTelefone(novoTelefone);
-        }
-
-        System.out.println("Novo endereço (ou ENTER para manter "+p.getEndereco()+")");
-        String novoEndereco = sc.nextLine();
-        if(!novoEndereco.isEmpty()){
-            p.setEndereco(novoEndereco);
-        }
-
-        System.out.println("Novo email (ou ENTER para manter "+p.getEmail()+")");
-        String novoEmail = sc.nextLine();
-        if(!novoEmail.isEmpty()){
-            p.setEmail(novoEmail);
-        }
-
-        proprietarioDAO.atualizar(p);
-        System.out.println("Proprietário atualizado com sucesso!");
-        return p;
     }
 
     public static Veterinario lerDadosVeterinario() {
@@ -371,11 +374,11 @@ public class Menu {
     public static Consulta lerDadosConsulta() {
         System.out.println("=== Agendamento de Consulta ===");
 
-        System.out.print("Data da Consulta (yyyy-mm-dd): ");
-        String data = sc.nextLine();
+        System.out.print("Data e Hora da Consulta (yyyy-MM-dd HH:mm): ");
+        String dataHora = sc.nextLine();
 
-        System.out.print("Motivo/Observação: ");
-        String motivo = sc.nextLine();
+        System.out.print("Diagnóstico: ");
+        String diagnostico = sc.nextLine();
 
         System.out.print("ID do Animal: ");
         int idAnimal = sc.nextInt();
@@ -385,16 +388,24 @@ public class Menu {
         int idVet = sc.nextInt();
         sc.nextLine();
 
+        System.out.println("Valor: ");
+        double valor = sc.nextDouble();
+        sc.nextLine();
         Consulta c = new Consulta();
+
         try {
-            c.setData(LocalDate.parse(data));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime dt = LocalDateTime.parse(dataHora, formatter);
+            c.setData_hora(dt);
         } catch (DateTimeParseException e) {
-            System.out.println("Data inválida! Inserindo data atual.");
-            c.setData(LocalDate.now());
+            System.out.println("Data/Hora inválida! Inserindo data e hora atual.");
+            c.setData_hora(LocalDateTime.now());
         }
-        c.setMotivo(motivo);
-        c.setIdAnimal(idAnimal);
-        c.setIdVeterinario(idVet);
+
+        c.setDiagnostico(diagnostico);
+        c.setId_Animal(idAnimal);
+        c.setId_Veterinario(idVet);
+        c.setValor(valor);
 
         return c;
     }
@@ -411,7 +422,7 @@ public class Menu {
             return null;
         }
 
-        System.out.println("Confirmar cancelamento da consulta do dia " + c.getData() + "? (s/n)");
+        System.out.println("Confirmar cancelamento da consulta da data " + c.getData_hora() + "? (s/n)");
         String resp = sc.nextLine();
 
         if (resp.equalsIgnoreCase("s")) {
@@ -436,10 +447,11 @@ public class Menu {
 
         System.out.println("\nConsulta encontrada:");
         System.out.println("ID: " + c.getId());
-        System.out.println("Data: " + c.getData());
-        System.out.println("Motivo: " + c.getMotivo());
-        System.out.println("ID Animal: " + c.getIdAnimal());
-        System.out.println("ID Veterinário: " + c.getIdVeterinario());
+        System.out.println("Data: " + c.getData_hora());
+        System.out.println("Diagnóstico: " + c.getDiagnostico());
+        System.out.println("ID Animal: " + c.getId_Animal());
+        System.out.println("ID Veterinário: " + c.getId_Veterinario());
+        System.out.println("Valor: " +c.getValor());
 
         System.out.println("\nDeseja atualizar os dados? (s/n)");
         String resp = sc.nextLine();
@@ -449,39 +461,65 @@ public class Menu {
             return null;
         }
 
-        System.out.println("Nova Data (ou ENTER para manter " + c.getData() + ")");
+        System.out.println("Nova Data e Hora (yyyy-MM-dd HH:mm) ou ENTER para manter " + c.getData_hora());
         String dataDigitada = sc.nextLine();
+
         if (!dataDigitada.isEmpty()) {
             try {
-                LocalDate novaData = LocalDate.parse(dataDigitada);
-                c.setData(novaData);
+                DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                LocalDateTime novaData = LocalDateTime.parse(dataDigitada, fmt);
+                c.setData_hora(novaData);
             } catch (Exception e) {
-                System.out.println("Data inválida! Mantendo a anterior.");
+                System.out.println("Data/Hora inválida! Mantendo a anterior.");
             }
         }
 
-        System.out.println("Novo Motivo (ou ENTER para manter " + c.getMotivo() + ")");
-        String novoMotivo = sc.nextLine();
-        if (!novoMotivo.isEmpty()) {
-            c.setMotivo(novoMotivo);
+        System.out.println("Novo Diagnóstico (ou ENTER para manter " + c.getDiagnostico() + ")");
+        String novoDiagnostico = sc.nextLine();
+        if (!novoDiagnostico.isEmpty()) {
+            c.setDiagnostico(novoDiagnostico);
         }
 
-        System.out.println("Novo ID Animal (ou 0 para manter " + c.getIdAnimal() + ")");
+        System.out.println("Novo ID Animal (ou 0 para manter id" + c.getId_Animal() + ")");
         int novoIdAnimal = sc.nextInt();
         sc.nextLine();
         if (novoIdAnimal != 0) {
-            c.setIdAnimal(novoIdAnimal);
+            c.setId_Animal(novoIdAnimal);
         }
 
-        System.out.println("Novo ID Veterinário (ou 0 para manter " + c.getIdVeterinario() + ")");
+        System.out.println("Novo ID Veterinário (ou 0 para manter id" + c.getId_Veterinario() + ")");
         int novoIdVet = sc.nextInt();
         sc.nextLine();
         if (novoIdVet != 0) {
-            c.setIdVeterinario(novoIdVet);
+            c.setId_Veterinario(novoIdVet);
+        }
+
+        System.out.println("Novo valor (ou 0 para manter o valor R$" + c.getValor() + ")");
+        double novovalor = sc.nextDouble();
+        sc.nextLine();
+        if (novovalor != 0) {
+            c.setValor(novovalor);
         }
 
         dao.atualizar(c);
         System.out.println("Consulta atualizada com sucesso!");
         return c;
     }
+
+
+
+
+    //public static Veterinario lerDadosVeterinario()
+    //public static Veterinario excluirVeterinario(int id)
+    //método atualizar pra veterinario
+
+    // public static Consulta lerDadosConsulta()
+    // public static Consulta excluirConsulta(int id)
+    // public static Consulta atualizarConsulta;
+
+    //public static Proprietario excluirProprietario(STRING CPF) FEITO
+    //public static Proprietario atualizarProprietario;
+
+
+
 }
