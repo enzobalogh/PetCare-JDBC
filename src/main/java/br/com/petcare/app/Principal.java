@@ -25,19 +25,15 @@ public class Principal extends Menu {
         int opcao;
 
         do {
-            System.out.println("\n===== PETCARE =====");
+            System.out.println("===== PETCARE =====");
             System.out.println("1 - Gerenciar Proprietários");
             System.out.println("2 - Gerenciar Animais");
             System.out.println("3 - Gerenciar Veterinários");
             System.out.println("4 - Gerenciar Consultas");
             System.out.println("0 - Sair");
-            System.out.print("Opção: ");
 
-            try {
-                opcao = Integer.parseInt(sc.nextLine());
-            } catch (NumberFormatException e) {
-                opcao = -1;
-            }
+            opcao = sc.nextInt();
+            sc.nextLine();
 
             switch(opcao) {
 
@@ -62,60 +58,66 @@ public class Principal extends Menu {
                     break;
 
                 case 3:
-                    System.out.println("\n--- MENU VETERINÁRIO ---");
-                    System.out.println("1 - Cadastrar");
-                    System.out.println("2 - Listar");
-                    System.out.println("3 - Atualizar");
-                    System.out.println("4 - Deletar");
-                    System.out.print("Escolha: ");
-                    int opVet = Integer.parseInt(sc.nextLine());
+                    System.out.println("--- VETERINÁRIOS ---");
+                    System.out.println("1-Cadastrar | 2-Listar | 3-Atualizar | 4-Deletar");
+                    int opVet = sc.nextInt();
+                    sc.nextLine();
 
-                    if (opVet == 1) {
-                        vetDAO.inserir(lerDadosVeterinario());
-                    } else if (opVet == 2) {
-                        System.out.println("== LISTA VETERINÁRIOS ==");
-                        for(Veterinario v : vetDAO.listarTodos()) {
-                            System.out.println("ID: " + v.getId() + " | Nome: " + v.getNome() + " | CRMV: " + v.getCrmv());
-                        }
-                    } else if (opVet == 3) {
-                        System.out.print("ID para atualizar: ");
-                        int id = Integer.parseInt(sc.nextLine());
-                        Veterinario v = lerDadosVeterinario();
-                        v.setId(id);
-                        vetDAO.atualizar(v);
-                    } else if (opVet == 4) {
-                        System.out.print("ID para deletar: ");
-                        int id = Integer.parseInt(sc.nextLine());
-                        vetDAO.deletar(id);
+                    switch(opVet) {
+                        case 1:
+                            vetDAO.inserir(lerDadosVeterinario());
+                            break;
+                        case 2:
+                            for(Veterinario v : vetDAO.listarTodos()) {
+                                System.out.println("ID: " + v.getId() + " | Nome: " + v.getNome() + " | CRMV: " + v.getCrmv());
+                            }
+                            break;
+                        case 3:
+                            System.out.print("ID para atualizar: ");
+                            int idV = sc.nextInt();
+                            sc.nextLine();
+                            Veterinario vUp = lerDadosVeterinario();
+                            vUp.setId(idV);
+                            vetDAO.atualizar(vUp);
+                            break;
+                        case 4:
+                            System.out.print("ID para deletar: ");
+                            int idDelV = sc.nextInt();
+                            sc.nextLine();
+                            vetDAO.deletar(idDelV);
+                            break;
                     }
                     break;
 
                 case 4:
-                    System.out.println("\n--- MENU CONSULTAS ---");
-                    System.out.println("1 - Agendar");
-                    System.out.println("2 - Listar");
-                    System.out.println("3 - Atualizar");
-                    System.out.println("4 - Deletar");
-                    System.out.print("Escolha: ");
-                    int opCon = Integer.parseInt(sc.nextLine());
+                    System.out.println("--- CONSULTAS ---");
+                    System.out.println("1-Agendar | 2-Listar | 3-Atualizar | 4-Deletar");
+                    int opCon = sc.nextInt();
+                    sc.nextLine();
 
-                    if (opCon == 1) {
-                        consDAO.inserir(lerDadosConsulta());
-                    } else if (opCon == 2) {
-                        System.out.println("== HISTÓRICO CONSULTAS ==");
-                        for(Consulta c : consDAO.listarTodas()) {
-                            System.out.println("ID: " + c.getId() + " | Data: " + c.getData_hora() + " | Diag: " + c.getDiagnostico());
-                        }
-                    } else if (opCon == 3) {
-                        System.out.print("ID para atualizar: ");
-                        int id = Integer.parseInt(sc.nextLine());
-                        Consulta c = lerDadosConsulta();
-                        c.setId(id);
-                        consDAO.atualizar(c);
-                    } else if (opCon == 4) {
-                        System.out.print("ID para deletar: ");
-                        int id = Integer.parseInt(sc.nextLine());
-                        consDAO.deletar(id);
+                    switch(opCon) {
+                        case 1:
+                            consDAO.inserir(lerDadosConsulta());
+                            break;
+                        case 2:
+                            for(Consulta c : consDAO.listarTodas()) {
+                                System.out.println("ID: " + c.getId() + " | Data: " + c.getData_hora() + " | Diag: " + c.getDiagnostico());
+                            }
+                            break;
+                        case 3:
+                            System.out.print("ID para atualizar: ");
+                            int idC = sc.nextInt();
+                            sc.nextLine();
+                            Consulta cUp = lerDadosConsulta();
+                            cUp.setId(idC);
+                            consDAO.atualizar(cUp);
+                            break;
+                        case 4:
+                            System.out.print("ID para deletar: ");
+                            int idDelC = sc.nextInt();
+                            sc.nextLine();
+                            consDAO.deletar(idDelC);
+                            break;
                     }
                     break;
 
