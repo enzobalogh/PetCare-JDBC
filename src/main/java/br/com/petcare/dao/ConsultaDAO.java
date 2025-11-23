@@ -78,7 +78,7 @@ public class ConsultaDAO {
 
 
     public void deletar(int id){
-        String sql = "DELETE FROM Consulta WHERE id_consulta = ?";
+        String sql = "DELETE FROM Consultas WHERE id_consulta = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -90,9 +90,34 @@ public class ConsultaDAO {
             e.printStackTrace();
             e.getMessage();
         }
+    }
 
+    public static Consulta buscarPorId(int id) {
+        String sql = "SELECT * FROM Consultas WHERE id_consulta = ?";
 
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+            stmt.setInt(1, id);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Consulta c = new Consulta();
+                c.setId(rs.getInt("id_consulta"));
+                c.setData_hora(rs.getTimestamp("data_hora").toLocalDateTime());
+                c.setDiagnostico(rs.getString("diagnostico"));
+                c.setValor(rs.getDouble("valor"));
+                c.setId_Animal(rs.getInt("id_animal"));
+                c.setId_Veterinario(rs.getInt("id_veterinario"));
+                return c;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }

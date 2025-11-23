@@ -1,6 +1,7 @@
 package br.com.petcare.dao;
 
 import br.com.petcare.database.ConnectionFactory;
+import br.com.petcare.model.Animal;
 import br.com.petcare.model.Proprietario;
 import br.com.petcare.model.Veterinario;
 import java.sql.*;
@@ -10,7 +11,7 @@ import java.util.List;
 public class VeterinarioDAO {
 
     public void inserir(Veterinario v) {
-        String sql = "INSERT INTO Veterinarios (nome, crmv, especialidade, telefone) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Veterinarios (nome_veterinario, crmv, especialidade, telefone) VALUES (?, ?, ?, ?)";
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -36,7 +37,7 @@ public class VeterinarioDAO {
             while (rs.next()) {
                 Veterinario v = new Veterinario();
                 v.setId(rs.getInt("id_veterinario"));
-                v.setNome(rs.getString("nome"));
+                v.setNome(rs.getString("nome_veterinario"));
                 v.setCrmv(rs.getString("crmv"));
                 v.setEspecialidade(rs.getString("especialidade"));
                 v.setTelefone(rs.getString("telefone"));
@@ -49,7 +50,7 @@ public class VeterinarioDAO {
     }
 
     public void atualizar(Veterinario v){
-        String sql = "UPDATE Veterinario SET nome_veterinario = ?, crmv = ?, especialidade = ?, telefone = ? WHERE id_veterinario = ?";
+        String sql = "UPDATE Veterinarios SET nome_veterinario = ?, crmv = ?, especialidade = ?, telefone = ? WHERE id_veterinario = ?";
 
         try(Connection conn = ConnectionFactory.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -68,7 +69,7 @@ public class VeterinarioDAO {
     }
 
     public void deletar(int id){
-        String sql = "DELETE FROM Veterinario WHERE id_veterinario = ?";
+        String sql = "DELETE FROM Veterinarios WHERE id_veterinario = ?";
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)){
@@ -83,6 +84,33 @@ public class VeterinarioDAO {
 
 
 
+    }
+
+    public static Veterinario buscarPorId(int id) {
+        String sql = "SELECT * FROM Veterinarios WHERE id_veterinario = ?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Veterinario v = new Veterinario();
+                v.setId(rs.getInt("id_veterinario"));
+                v.setNome(rs.getString("nome_veterinario"));
+                v.setCrmv(rs.getString("crmv"));
+                v.setEspecialidade(rs.getString("especialidade"));
+                v.setTelefone(rs.getString("telefone"));
+                return v;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 }
