@@ -4,17 +4,20 @@ import br.com.petcare.dao.AnimalDAO;
 import br.com.petcare.dao.ConsultaDAO;
 import br.com.petcare.dao.ProprietarioDAO;
 import br.com.petcare.dao.VeterinarioDAO;
+import br.com.petcare.database.ConnectionFactory;
 import br.com.petcare.model.Animal;
 import br.com.petcare.model.Consulta;
 import br.com.petcare.model.Proprietario;
 import br.com.petcare.model.Veterinario;
 import br.com.petcare.view.Menu;
-
 import java.util.List;
 import java.util.Scanner;
 
 public class Principal extends Menu {
     public static void main(String[] args) {
+
+        ConnectionFactory.pedeSenha();
+        ConnectionFactory.testarConexao();
 
         AnimalDAO animalDAO = new AnimalDAO();
         ProprietarioDAO proprietarioDAO = new ProprietarioDAO();
@@ -24,6 +27,7 @@ public class Principal extends Menu {
         Scanner sc = new Scanner(System.in);
         int opcao;
         int opcao2;
+
 
         do {
             System.out.println("===== PETCARE =====");
@@ -45,6 +49,7 @@ public class Principal extends Menu {
                     System.out.println("3 - Atualizar proprietário");
                     System.out.println("4 - Voltar");
                     opcao2 = sc.nextInt();
+                    sc.nextLine();
                     switch (opcao2) {
                         case 1:
                             Proprietario p = lerDadosProprietario();
@@ -82,6 +87,7 @@ public class Principal extends Menu {
 
                         case 3:
                             //ATUALIZAR PROPRIETÁRIO
+                            System.out.println("Digite o CPF do proprietário:");
                             cpf = sc.nextLine();
                             atualizarProprietario(cpf);
                             proprietarios = proprietarioDAO.listarTodos();
@@ -107,6 +113,7 @@ public class Principal extends Menu {
                     System.out.println("3 - Atualizar animal");
                     System.out.println("4 - Voltar");
                     opcao2 = sc.nextInt();
+                    sc.nextLine();
                     switch (opcao2) {
                         case 1:
                             Animal a = lerDadosAnimal();
@@ -174,6 +181,7 @@ public class Principal extends Menu {
                     System.out.println("3 - Atualizar Veterinário");
                     System.out.println("4 - Voltar");
                     opcao2 = sc.nextInt();
+                    sc.nextLine();
                     switch (opcao2) {
                         case 1 :
                             //INSERIR VETERINARIO
@@ -240,6 +248,7 @@ public class Principal extends Menu {
                     System.out.println("3 - Atualizar Consulta");
                     System.out.println("4 - Voltar");
                     opcao2 = sc.nextInt();
+                    sc.nextLine();
 
                     switch (opcao2){
                         case 1 :
@@ -310,5 +319,7 @@ public class Principal extends Menu {
 
         System.out.println("Encerrando...");
     }
+
+
 }
 
